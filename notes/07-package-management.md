@@ -1,19 +1,19 @@
-# 07 - Package Management (apt)
+# 07 - Package Management (pacman)
 
-apt (Advanced Package Tool) is the package manager used on Ubuntu and Debian-based systems. It handles installing, updating, and removing software.
+pacman is the package manager used on Arch Linux and Arch-based systems (Manjaro, EndeavourOS, etc.). It handles installing, updating, and removing software.
 
 ---
 
 ## Basic Commands
 
 ```bash
-sudo apt update                     # Refresh package list from repositories
-sudo apt upgrade                    # Upgrade all installed packages
-sudo apt full-upgrade               # Upgrade + handle dependency changes
-sudo apt install packagename        # Install a package
-sudo apt remove packagename         # Remove a package (keep config files)
-sudo apt purge packagename          # Remove package and config files
-sudo apt autoremove                 # Remove unused dependencies
+sudo pacman -Sy                     # Refresh package database
+sudo pacman -Syu                    # Full system upgrade (sync + upgrade)
+sudo pacman -S packagename          # Install a package
+sudo pacman -R packagename          # Remove a package (keep dependencies)
+sudo pacman -Rs packagename         # Remove package + unneeded dependencies
+sudo pacman -Rns packagename        # Remove package, deps, and config files
+sudo pacman -Sc                     # Remove old cached packages
 ```
 
 ---
@@ -21,10 +21,12 @@ sudo apt autoremove                 # Remove unused dependencies
 ## Searching
 
 ```bash
-apt search keyword                  # Search for packages by keyword
-apt show packagename                # Show details about a package
-apt list --installed                # List all installed packages
-apt list --upgradable               # List packages with available updates
+pacman -Ss keyword                  # Search for packages in repos
+pacman -Si packagename              # Show details about a repo package
+pacman -Qs keyword                  # Search installed packages
+pacman -Qi packagename              # Show details about installed package
+pacman -Q                           # List all installed packages
+pacman -Qu                          # List packages with available updates
 ```
 
 ---
@@ -32,53 +34,61 @@ apt list --upgradable               # List packages with available updates
 ## Common Workflow
 
 ```bash
-sudo apt update && sudo apt upgrade -y
+sudo pacman -Syu
 ```
 
-Always run `update` before `install` — otherwise apt installs from an outdated list.
+Always sync + upgrade together. Running `-Su` without `-Sy` can cause partial upgrades — which Arch explicitly warns against.
 
 ---
 
-## dpkg — Low Level Package Tool
+## pacman Flags Cheat Sheet
 
-apt uses dpkg underneath. You can use dpkg directly for `.deb` files.
+| Flag | Meaning |
+|------|---------|
+| `-S` | Sync (install from repo) |
+| `-R` | Remove |
+| `-Q` | Query (local database) |
+| `-U` | Upgrade (install local `.pkg.tar.zst`) |
+| `-F` | File database search |
+| `y` | Refresh package database |
+| `u` | Upgrade installed packages |
+| `s` | Search |
+| `i` | Info |
+| `q` | Quiet output |
+| `n` | Also remove config files (with `-R`) |
+
+---
+
+## Installing Local Packages
+
+For manually downloaded `.pkg.tar.zst` files:
 
 ```bash
-sudo dpkg -i package.deb           # Install a .deb file manually
-sudo dpkg -r packagename           # Remove a package
-dpkg -l                            # List all installed packages
-dpkg -l | grep packagename         # Check if a package is installed
+sudo pacman -U /path/to/package.pkg.tar.zst
 ```
 
 ---
 
-## snap — Another Package Format
+## AUR — Arch User Repository
 
-Ubuntu also supports snap packages.
+The AUR contains community-maintained packages not in the official repos. You need an AUR helper to use it easily.
+
+### Using yay (most popular AUR helper)
 
 ```bash
-snap find packagename               # Search for a snap
-sudo snap install packagename       # Install a snap
-sudo snap remove packagename        # Remove a snap
-snap list                           # List installed snaps
+yay -S packagename                  # Install from AUR or official repos
+yay -Syu                            # Upgrade everything including AUR
+yay -Ss keyword                     # Search AUR + official repos
+yay -R packagename                  # Remove a package
 ```
 
----
-
-## Adding Repositories (PPA)
-
-PPA = Personal Package Archive. Used to install software not in default repos.
+### Installing yay itself
 
 ```bash
-sudo add-apt-repository ppa:user/repo
-sudo apt update
-sudo apt install packagename
-```
-
-To remove a PPA:
-
-```bash
-sudo add-apt-repository --remove ppa:user/repo
+sudo pacman -S --needed git base-devel
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
 ```
 
 ---
@@ -86,9 +96,18 @@ sudo add-apt-repository --remove ppa:user/repo
 ## Package Cache
 
 ```bash
-sudo apt clean                      # Delete downloaded package files
-sudo apt autoclean                  # Delete only outdated package files
-du -sh /var/cache/apt/archives/     # Check cache size
+sudo pacman -Sc                     # Remove old cached package versions
+sudo pacman -Scc                    # Remove entire package cache (be careful)
+du -sh /var/cache/pacman/pkg/       # Check cache size
+```
+
+---
+
+## Orphaned Packages
+
+```bash
+pacman -Qdt                         # List orphaned packages (unneeded deps)
+sudo pacman -Rns $(pacman -Qdtq)    # Remove all orphans
 ```
 
 ---
@@ -105,4 +124,5 @@ du -sh /var/cache/apt/archives/     # Check cache size
 | `tree` | Show directory structure as tree |
 | `unzip` | Extract zip files |
 | `vim` | Terminal text editor |
-| `neofetch` | System info display |
+| `fastfetch` | System info display (neofetch successor) |
+| `base-devel` | Build tools (gcc, make, etc.) — needed for AUR |
