@@ -1,40 +1,13 @@
-# Learning Linux
+# Learning Linux 🐧
 
-A personal repository documenting my Linux learning journey — commands, scripts, configs, and notes organized by topic.
+A personal Linux learning journey — notes, commands, scripts, and configs, all in one place.
 
----
+## About
 
-## Repository Structure
+This repository documents my hands-on experience with Linux. It includes topic-wise notes, practice Bash scripts, and personal configuration files that I collect as I learn.
 
-```
-learning-linux/
-│
-├── notes/                  # Topic-wise notes in Markdown
-│   ├── 01-basics.md
-│   ├── 02-file-system.md
-│   ├── 03-permissions.md
-│   ├── 04-processes.md
-│   └── 05-networking.md
-│
-├── scripts/                # Bash scripts written during practice
-│   └── hello.sh
-│
-└── configs/                # Personal configuration files
-    └── .bashrc
-```
+## What's Inside
 
----
-
-## Topics
-
-| Status | Topic |
-|--------|-------|
-| In Progress | Basic Commands |
-| Upcoming | File System & Paths |
-| Upcoming | Permissions |
-| Upcoming | Processes & Jobs |
-| Upcoming | Networking |
-| Upcoming | Bash Scripting |
-| Upcoming | Package Management (apt) |
-
----
+- 📝 Notes on Linux topics (basics, file system, permissions, and more)
+- 🖥️ Practice Bash scripts
+- ⚙️ Personal configuration files
